@@ -1,13 +1,11 @@
 
 //package proyectoordenamientoexterno;
 
-
 import java.io.*;
 import java.util.*;
 import java.util.Scanner;
  
 public class Radixsort {
-    int c[] = new int[500];
     Scanner opcion = new Scanner(System.in);
     
     public int getMax(int arr[], int n)
@@ -73,11 +71,11 @@ public class Radixsort {
         BufferedReader buff = new BufferedReader(lectura);
         String linea = buff.readLine();
         String[] key = linea.split(",");
-        
+        int c[] = new int[key.length];
         for(int i=0; i<key.length; i++){
             c[i]=Integer.parseInt(key[i]);
         }
-        radixsort(c, 500);
+        radixsort(c, c.length);
     }
     
     public void radixsort(int arr[], int n)throws IOException{
@@ -102,7 +100,7 @@ public class Radixsort {
         int cantidad = 500;
         
         for(int i=0; i<cantidad; i++){
-            archivo.write(c[i]+",");
+            archivo.write(arr[i]+",");
         }
         archivo.close();
         System.out.println("Archivo Ordenado Correctamente");
