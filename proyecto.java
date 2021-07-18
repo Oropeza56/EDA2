@@ -32,19 +32,19 @@ do{
    	  switch(opc){
    	  	case 1:
    		 	mezclaEquilA m = new mezclaEquilA();
-   			System.out.print("F0: ");
-   			m.imprimirArchivo(f);
-   			while(m.revision(f)==false){
-   					m.mezcla(f);
+   			System.out.print("F0: ");   
+   			m.imprimirArchivo(f);  //Imprime el archivo con las claves 
+   			while(m.revision(f)==false){  //Mientras las claves no estan ordenadas de manera ascendente
+   					m.mezcla(f); // Entra al metodo de mezcla equilibrada
    		  }
    	  	break;
    
    	  	case 2:
    		  mezclaEquilD mi = new mezclaEquilD();
    			System.out.print("F0: ");
-   			mi.imprimirArchivo(f);
-   			while(mi.revision(f)==false){
-   					mi.mezcla(f);
+   			mi.imprimirArchivo(f);  //Imprime el archivo con las claves 
+   			while(mi.revision(f)==false){  //Mientras las claves no estan ordenadas de manera descendente
+   					mi.mezcla(f); // Entra al metodo de mezcla equilibrada
    		  }
    	  	break;
    	  }
@@ -73,30 +73,31 @@ do{
 class mezclaEquilA{
 	public static void mezcla(File f) throws FileNotFoundException, IOException{
 	
-	
 	  FileWriter fw= null;
 	    
-	if (f.exists()){
-
-       List<Integer> elementos = new LinkedList<>();
+	if (f.exists()){ // Se verifica si el archivo existe 
+//	SI EXISTE EL ARCHIVO..
+       List<Integer> elementos = new LinkedList<>(); //Todas las claves del archivo F0 se almacenaran en esta lista 
 
   try{	 
-  File f1 = new File ("num01.txt");
+	  //SE CREAN LOS ARCHIVOS AUXILIARES f1 Y f2
+  File f1 = new File ("num01.txt");  //
 	  File f2 = new File ("num02.txt");
   		
 
       	FileReader fr = new FileReader(f);
 	     BufferedReader b = new BufferedReader(fr);
 
-	    String linea = b.readLine();	
-	    String[] key = linea.split(",");
+	    String linea = b.readLine();	//Se leen todas las claves del archivo y se guardan en un String
+	    String[] key = linea.split(","); //Se guardan las claves en un array de String, omitiendo las comas
 	     for(int i = 0; i<key.length; i++){
            
-            elementos.add(Integer.parseInt(key[i]));
+            elementos.add(Integer.parseInt(key[i])); // Se convierte cada string de ese array en un dato de tipo int, y se guarda en la lista
+		     //En esta lista (elementos) siempre se guardan los datos del archivo F0
         }
 
-	     particion(elementos, f1, f2);
-	     fusion(f, f1, f2);
+	     particion(elementos, f1, f2); // Se hace la llamada al metodo particion, se ocupa la lista de elementos y dos archivos auxiliares 
+	     fusion(f, f1, f2); //Despues de hacer la particion, se realiza la fusion, en este metodo ocupamos el archivo original, y los dos archivos auxiliares
 	   
 	   
 		}catch (Exception e2){
@@ -111,7 +112,7 @@ class mezclaEquilA{
 
 
 public static void particion(List <Integer> l, File f1, File f2){
-  	
+  	// Aqui se realiza la particion de los elemntos del archivo F0
   		try{
   		int i=0;
 	     BufferedWriter bw1 = new BufferedWriter(new FileWriter (f1));
@@ -128,47 +129,50 @@ public static void particion(List <Integer> l, File f1, File f2){
   	     int derecha = l.size()-1;
   	     int der =derecha;
  bw1.flush();
-  	while (izquierda < derecha){
+  	while (izquierda < derecha){ //Se recorre toda la lista de claves del archivo F0 
   		izq = izquierda;
-  		 while (izq < derecha && l.get(izq) <= l.get(izq+1)){
-  		 	izq++;
+  		 while (izq < derecha && l.get(izq) <= l.get(izq+1)){ //Se verifica que aun no se llegue al final de la lista y 
+  		 	izq++;                                        //que los elementos se tomen de manera ascendente 
+			 					     // Se detiene cuando el elemento anterior es mayor que el siguiente
   		 }
 
   		 bw1.write("[");
   		  while (indice<= izq ){
   		 	aux.add(indi, l.get(indice));
-  		 	bw1.write(Integer.toString(aux.get(indi)));
-	    	bw1.write(",");
-  		 	indice++;
+  		 	bw1.write(Integer.toString(aux.get(indi)));  //Con ayuda de la variable IZQ sacamos los elementos de la lista principal por medio del indice
+			  					    // Y los escribimos en el primer archivo auxiliar F1
+	    	bw1.write(",");					   // Los elementos que saquemos de la lista principal van entre corchetes y separados por comas
+  		 	indice++;				   // [a,b,c,d ]	
   		 	indi++;
   		 }
 	    bw1.write("]");
 
-  		 der =izq + 1;
-  		 while( der < derecha && l.get(der)<= l.get(der+1)){
-  		 	der++;
+  		 der =izq + 1;        //Para la siguiente particion, tomamos la posicion donde habiamos llegado en la particion para el archivo 1
+  		 while( der < derecha && l.get(der)<= l.get(der+1)){ // Se verifica que aun no se llegue al final de la lista, y que los elementos que se lleguen  
+  		 	der++;					     // a tomar, esten ordenados de manera ascendente
   		 }
 
   		 bw2.write("[");
-  		 while(indice <= der && indice <= derecha){
-  		 	aux2.add(ind, l.get(indice));
-  		 	bw2.write(Integer.toString(aux2.get(ind)));
-	    	bw2.write(",");
+  		 while(indice <= der && indice <= derecha){         //Con ayuda del la variable DER sacamos los elementos de la lista principal por medio del indice
+  		 	aux2.add(ind, l.get(indice));		   // Y los escribimos en el archivo auxiliar F2	
+  		 	bw2.write(Integer.toString(aux2.get(ind))); // De igual manera los elementos que saquemos de la lista principal para F2, van separados
+	    	bw2.write(",");					   // por comas y entre corchetes
   		 	indice++;
   		 	ind++;
   		 }
   		 bw2.write("]");
 
-  		 izquierda = der +1;
+  		 izquierda = der +1; //Se actualiza la posicion en la lista
   	}
-  	  	 
-	    bw1.close();
+  	  	 //Cuando terminamos de revisar toda la lista, y de haber realizado todas las particiones necesarias...
+	    bw1.close();  // Cerramos el archivo F1 y F2
 	    bw2.close();
 	    System.out.print("\nF1: ");
-	    imprimirArchivo(f1);
+	    imprimirArchivo(f1); // Imprimimos las bloques de claves de los archivos auxiliares F1 y F2
+			// Practicamente se verian asi:  [a,b,c],[d,e,f],[z], 
 	    
 	    System.out.print("\nF2: ");
-	    imprimirArchivo(f2);
+	    imprimirArchivo(f2); 
 	    
   	}catch (Exception e2){
 	       e2.printStackTrace();
@@ -176,8 +180,8 @@ public static void particion(List <Integer> l, File f1, File f2){
 
   }
 
-  public static void fusion (File f, File f1, File f2)throws FileNotFoundException, IOException{
-  
+  public static void fusion (File f, File f1, File f2)throws FileNotFoundException, IOException{ 
+  //Aqui realizamos la fusion de los bloques de los archivos f1 y f2
   try{
   BufferedWriter bw = new BufferedWriter(new FileWriter (f));
   
@@ -185,35 +189,38 @@ public static void particion(List <Integer> l, File f1, File f2){
 	     BufferedReader b1 = new BufferedReader(fr1);
 	     	FileReader fr2 = new FileReader(f2);
 	     		BufferedReader b2 = new BufferedReader(fr2);
-	          List<String> l = new LinkedList<>();
-   	          List<String> l2 = new LinkedList<>();
+	          List<String> l = new LinkedList<>(); //Lista aux 1
+   	          List<String> l2 = new LinkedList<>(); // Lista aux 2
 
 
-    String linea = b1.readLine();	      
-     String[] key = linea.split("\\]");
+    String linea = b1.readLine(); // se lee el contenido de archivo F1 Y F2	      
+     String[] key = linea.split("\\]"); //Se guardan los datos por bloques en arreglos, omitiendo "]"
        String linea2 =b2.readLine();
         String[] key2 = linea2.split("\\]");
 
-     for (int i= 0; i< key.length || i<key2.length; i++ ) {
-     	l.add(i,key[i].replace("[", "") + key2[i].replace("[", "") );
-     	l2.add(i , ordenar(l.get(i)));
+     for (int i= 0; i< key.length || i<key2.length; i++ ) { //Como condicion estan el tamaño de ambas listas
+     	l.add(i,key[i].replace("[", "") + key2[i].replace("[", "") ); //Se agrega en la lista aux1, el (primer, segundo, tercer, ..., n) bloque de datos de ambos arreglos
+     								      //se concatenan los datos y  se les quita el "["
+	     l2.add(i , ordenar(l.get(i))); //En la lista aux2, se agregan los datos ya concatenados y se llama al metodo ordenar, el cual pide un String
+	     					//Cuando se agregan elementos en la lista aux2, se agregan ya ordenados 
      }
 
+	  //Cuando se termina de fusionar y ordenar los elementos... 
        for(int i = 0; i <l2.size(); i++){
-       	bw.write(l2.get(i));
-	    	bw.write(",");
+       	bw.write(l2.get(i)); // Se escriben todos los datos de la lista aux2, en el archivo F0
+	    	bw.write(","); //Se separan por comas
        }
 
-       bw.close();
+       bw.close(); //Se cierra el archivo F0
       System.out.print("\nF0: ");
-       imprimirArchivo(f);
+       imprimirArchivo(f);  //Se imprime el archivo F0
 
      }catch (Exception e2){
 	       e2.printStackTrace();
 		 }
   }
 
-  public static void imprimirArchivo(File f) throws FileNotFoundException, IOException{
+  public static void imprimirArchivo(File f) throws FileNotFoundException, IOException{ //Con este metodo imprimimos el contenido de los archivos
   	String cadena;
   		FileReader fr = new FileReader(f);
 	     BufferedReader b = new BufferedReader(fr);
@@ -224,27 +231,26 @@ public static void particion(List <Integer> l, File f1, File f2){
 
   }
 
-  public static String ordenar(String l1){
+  public static String ordenar(String l1){ // Se ocupa el string que obtuvimos en el metodo fusion 
   	String r = null;
   	 String a = null;  
-   	   String[] arr = l1.split(",");
-		     	int[] arre = new int[arr.length];
+   	   String[] arr = l1.split(","); //Guardamos cada dato del string en un arreglo, omitiendo las comas 
+		     	int[] arre = new int[arr.length]; 
 
        for (int j= 0; j< arr.length; j++ ) {
-		     	arre[j] =Integer.parseInt(arr[j]);
+		     	arre[j] =Integer.parseInt(arr[j]); //Cada elemento del arreglo de String, lo convertimos en un int y lo guardamos en el arreglo "arre"
 	     }
 		 
-		 sortR(arre);
-		 for (int j= 0; j< arre.length; j++ ) {
-	     }
-		 r = Arrays.toString(arre);
-		 a = r.replace("[", "");
-		 r = a.replace("]", "");
-		 a =r.replace(" ", "");
+		 sortR(arre); //Con dicho arreglo, llamamos al metodo sortR para ordenar dicho arreglo de manera ascendente, se ocupa SelectionSort para ordenar el arreglo
+		
+		 r = Arrays.toString(arre); //convertimos el arreglo en un string, el cual lo convierte de esto a,b,c a esto [a,b,c]
+		 a = r.replace("[", ""); //Quitamos "[" 
+		 r = a.replace("]", ""); //Luego quitamos este "]"
+		 a =r.replace(" ", ""); // Y quitamos todos los espacios 
 
-		 return a;
+		 return a; //Devolvemos un string con los datos ya ordenados
   }
- public static int[] sortR (int[] a){
+ public static int[] sortR (int[] a){ //Con este metodo ordenamos los arreglos que nos pase el metodo ordenar 
 
    int n = a.length;
    for (int i =0; i < n-1 ; i++) {
@@ -262,11 +268,11 @@ public static void particion(List <Integer> l, File f1, File f2){
    	}
    }
    
-   return a;
+   return a; //Regresamos el array ordenado
  }
 
-  public static boolean revision (File f)throws FileNotFoundException, IOException{
-  	boolean rev = true;
+  public static boolean revision (File f)throws FileNotFoundException, IOException{ //Con este metodo verificamos si el archivo a sido ordenado de manera 
+  	boolean rev = true;								// ascendente, comparando el elemento anterior con el elemento siguiente
   	FileReader fr = new FileReader(f);
 	  BufferedReader b = new BufferedReader(fr);
     List<Integer> lista = new LinkedList<>();
